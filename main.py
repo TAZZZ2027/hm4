@@ -1,0 +1,139 @@
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg
+from matplotlib.figure import Figure
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import (
+    QApplication,
+    QFileDialog,
+    QHBoxLayout,
+    QLabel,
+    QMainWindow,
+    QMessageBox,
+    QPushButton,
+    QVBoxLayout,
+    QWidget,
+)
+
+
+class IceCreamChartWindow(QMainWindow):
+    def __init__(self) -> None:
+        super().__init__()
+        self.setWindowTitle("Scoops & Stats 🍦")
+        self.resize(1100, 760)
+        self.setMinimumSize(760, 540)
+
+        central_widget = QWidget()
+        central_widget.setObjectName("centralWidget")
+        self.setCentralWidget(central_widget)
+
+        main_layout = QVBoxLayout(central_widget)
+        main_layout.setContentsMargins(28, 24, 28, 28)
+        main_layout.setSpacing(18)
+
+        action_bar = QWidget()
+        action_bar.setObjectName("actionBar")
+        action_layout = QHBoxLayout(action_bar)
+        action_layout.setContentsMargins(22, 16, 22, 16)
+
+        title_layout = QVBoxLayout()
+        title_layout.setSpacing(3)
+
+        heading = QLabel("Scoops & Stats 🍨")
+        heading.setObjectName("heading")
+        title_layout.addWidget(heading)
+
+        self.file_button = QPushButton("🍧  Choose File")
+        self.file_button.setObjectName("chooseFileButton")
+        self.file_button.clicked.connect(self.choose_file)
+        action_layout.addWidget(self.file_button)
+
+        self.about_button = QPushButton("About")
+        self.about_button.setObjectName("aboutButton")
+        self.about_button.clicked.connect(self.show_about)
+        action_layout.addWidget(self.about_button)
+        main_layout.addWidget(action_bar)
+
+        chart_panel = QWidget()
+        chart_panel.setObjectName("chartPanel")
+        chart_layout = QVBoxLayout(chart_panel)
+        chart_layout.setContentsMargins(18, 18, 18, 14)
+        chart_layout.setSpacing(10)
+
+
+        self.figure = Figure(figsize=(8, 5), dpi=100, facecolor="#FFFDF7")
+        self.canvas = FigureCanvasQTAgg(self.figure)
+        self.canvas.setObjectName("chartCanvas")
+        chart_layout.addWidget(self.canvas, stretch=1)
+        main_layout.addWidget(chart_panel, stretch=1)
+
+        self.plot_placeholder()
+
+    def choose_file(self) -> None:
+        file_path, _ = QFileDialog.getOpenFileName(
+            self,
+            "Choose a CSV file",
+            "",
+            "CSV files (*.csv);;All files (*)",
+        )
+        if file_path:
+            self.file_status.setText(f"Ready to load: {Path(file_path).name}")
+            self.load_csv_placeholder(file_path)
+
+    def load_csv_placeholder(self, file_path: str) -> None:
+        """Implement CSV loading and chart updates here."""
+        pass
+
+    def show_about(self) -> None:
+        repository_url = "https://github.com/your-username/your-repository"
+        message = QMessageBox(self)
+        message.setWindowTitle("About Scoops & Stats")
+        message.setIcon(QMessageBox.Icon.Information)
+        message.setTextFormat(Qt.TextFormat.RichText)
+        message.setText(
+            "A cheerful little desktop app for exploring your data.<br><br>"
+            "Made with PySide6 and Matplotlib.<br>"
+            f'<a href="{repository_url}">Visit the project on GitHub</a>'
+        )
+        message.setStandardButtons(QMessageBox.StandardButton.Ok)
+        message.exec()
+
+    def plot_placeholder(self) -> None:
+        axes = self.figure.add_subplot(111)
+        days = [1, 2, 3, 4, 5, 6, 7]
+        scoops = [2, 3, 2.5, 4, 3.5, 5, 4.5]
+        axes.plot(days, scoops, color="#FF6B8B", marker="o", linewidth=3)
+        axes.fill_between(days, scoops, color="#FF6B8B", alpha=0.12)
+        axes.set_title("A week of imaginary scoops", color="#554B45", pad=14)
+        axes.set_xlabel("Sunny day")
+        axes.set_ylabel("Scoops enjoyed")
+        axes.set_xticks(days)
+        axes.grid(True, color="#EADFD3", linewidth=0.8, alpha=0.8)
+        axes.set_facecolor("#FFFDF7")
+        axes.spines[["top", "right"]].set_visible(False)
+        axes.spines[["left", "bottom"]].set_color("#EADFD3")
+        axes.tick_params(colors="#766B63")
+        axes.xaxis.label.set_color("#766B63")
+        axes.yaxis.label.set_color("#766B63")
+        self.figure.tight_layout()
+        self.canvas.draw()
+
+
+def main() -> int:
+    app = QApplication.instance()
+    if app is None:
+        app = QApplication(sys.argv)
+
+    stylesheet_path = Path(__file__).with_name("style.qss")
+    app.setStyleSheet(stylesheet_path.read_text(encoding="utf-8"))
+
+    window = IceCreamChartWindow()
+    window.show()
+    return app.exec()
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

@@ -1,0 +1,107 @@
+QMainWindow {
+    background: qlineargradient(
+        x1: 0, y1: 0, x2: 1, y2: 1,
+        stop: 0 #FFFDF7,
+        stop: 1 #FFF1E8
+    );
+}
+
+#centralWidget {
+    background: transparent;
+}
+
+#actionBar {
+    background: qlineargradient(
+        x1: 0, y1: 0, x2: 1, y2: 0,
+        stop: 0 #FFFDF7,
+        stop: 1 #FFF4E8
+    );
+    border: 1px solid #F3DFCF;
+    border-radius: 18px;
+}
+
+#heading {
+    color: #554B45;
+    font-size: 23px;
+    font-weight: 700;
+}
+
+#tagline, #fileStatus {
+    color: #8A7B70;
+    font-size: 13px;
+}
+
+#fileStatus {
+    padding-left: 8px;
+}
+
+#chartPanel {
+    background-color: #FFFDF7;
+    border: 1px solid #F3DFCF;
+    border-radius: 18px;
+}
+
+#chartHeading {
+    color: #554B45;
+    font-size: 17px;
+    font-weight: 600;
+    padding: 2px 4px;
+}
+
+QPushButton {
+    color: #554B45;
+    background-color: #FFFDF7;
+    border: 1px solid #EADFD3;
+    border-radius: 13px;
+    padding: 10px 16px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+QPushButton:hover {
+    background-color: #FFF0E8;
+    border-color: #FF9AAF;
+}
+
+QPushButton:pressed {
+    background-color: #FFE0E7;
+    padding-top: 11px;
+    padding-bottom: 9px;
+}
+
+#chooseFileButton {
+    color: #FFFFFF;
+    background-color: #FF6B8B;
+    border-color: #FF6B8B;
+}
+
+#chooseFileButton:hover {
+    background-color: #F45478;
+    border-color: #F45478;
+}
+
+#chooseFileButton:pressed {
+    background-color: #DE3F65;
+    border-color: #DE3F65;
+}
+
+#aboutButton {
+    border-color: #F4A261;
+}
+
+#aboutButton:hover {
+    background-color: #EAF7EB;
+    border-color: #6BCB77;
+}
+
+QMessageBox {
+    background-color: #FFFDF7;
+}
+
+QMessageBox QLabel {
+    color: #554B45;
+}
+
+QMessageBox QPushButton {
+    min-width: 76px;
+}
