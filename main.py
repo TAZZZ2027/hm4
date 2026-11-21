@@ -1,22 +1,21 @@
 from __future__ import annotations
-
+from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg, NavigationToolbar2QT
 import sys
+import numpy as np
 from pathlib import Path
-
-from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
-from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
     QApplication,
     QFileDialog,
     QHBoxLayout,
     QLabel,
     QMainWindow,
-    QMessageBox,
     QPushButton,
     QVBoxLayout,
     QWidget,
 )
+
+from about import AboutWindow
 
 
 class IceCreamChartWindow(QMainWindow):
@@ -73,6 +72,8 @@ class IceCreamChartWindow(QMainWindow):
         self.figure = Figure(figsize=(8, 5), dpi=100, facecolor="#FFFDF7")
         self.canvas = FigureCanvasQTAgg(self.figure)
         self.canvas.setObjectName("chartCanvas")
+        self.toolbar = NavigationToolbar2QT(self.canvas, self)
+        chart_layout.addWidget(self.toolbar)
         chart_layout.addWidget(self.canvas, stretch=1)
         main_layout.addWidget(chart_panel, stretch=1)
 
@@ -88,27 +89,37 @@ class IceCreamChartWindow(QMainWindow):
                 self.icecream = l.split(',')
                 self.temperatures.append(float(self.icecream[0]))
                 self.profits.append(float(self.icecream[1]))
+        self.plot_ice_cream()
 
+    def plot_ice_cream(self):
+        self.figure.clear()
+        ax = self.figure.add_subplot(111)
 
+        ax.scatter(self.temperatures, self.profits, s=1)
 
+        m, b = np.polyfit(self.temperatures, self.profits, 1)
+        x_vals = np.array(self.temperatures)
+        y_line = m * x_vals + b
+        ax.plot(x_vals, y_line, color="red", label=f"y = {m:.2f}x + {b:.2f}")
 
-    def load_csv_placeholder(self, file_path: str) -> None:
-        """Implement CSV loading and chart updates here."""
-        pass
+        ax.spines["top"].set_visible(False)
+        ax.spines["right"].set_visible(False)
+
+        ax.set_title("Ice Cream Profits vs. Temperature")
+        ax.set_xlabel("Temperature")
+        ax.set_ylabel("Profits")
+        ax.legend()
+
+        self.figure.tight_layout()
+        self.canvas.draw()
+
 
     def show_about(self) -> None:
-        repository_url = "https://github.com/your-username/your-repository"
-        message = QMessageBox(self)
-        message.setWindowTitle("About Scoops & Stats")
-        message.setIcon(QMessageBox.Icon.Information)
-        message.setTextFormat(Qt.TextFormat.RichText)
-        message.setText(
-            "A cheerful little desktop app for exploring your data.<br><br>"
-            "Made with PySide6 and Matplotlib.<br>"
-            f'<a href="{repository_url}">Visit the project on GitHub</a>'
-        )
-        message.setStandardButtons(QMessageBox.StandardButton.Ok)
-        message.exec()
+        if not hasattr(self, "about_window"):
+            self.about_window = AboutWindow()
+        self.about_window.show()
+        self.about_window.raise_()
+        self.about_window.activateWindow()
 
     def plot_placeholder(self) -> None:
         axes = self.figure.add_subplot(111)
