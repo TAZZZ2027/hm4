@@ -22,6 +22,12 @@ from PySide6.QtWidgets import (
 class IceCreamChartWindow(QMainWindow):
     def __init__(self) -> None:
         super().__init__()
+
+        self.temperatures = []
+        self.profits = []
+        self.icecream = []
+        self.selected_file = ''
+
         self.setWindowTitle("Scoops & Stats 🍦")
         self.resize(1100, 760)
         self.setMinimumSize(760, 540)
@@ -48,7 +54,7 @@ class IceCreamChartWindow(QMainWindow):
 
         self.file_button = QPushButton("🍧  Choose File")
         self.file_button.setObjectName("chooseFileButton")
-        self.file_button.clicked.connect(self.choose_file)
+        self.file_button.clicked.connect(self.Choose_file_fun)
         action_layout.addWidget(self.file_button)
 
         self.about_button = QPushButton("About")
@@ -72,16 +78,19 @@ class IceCreamChartWindow(QMainWindow):
 
         self.plot_placeholder()
 
-    def choose_file(self) -> None:
-        file_path, _ = QFileDialog.getOpenFileName(
-            self,
-            "Choose a CSV file",
-            "",
-            "CSV files (*.csv);;All files (*)",
-        )
-        if file_path:
-            self.file_status.setText(f"Ready to load: {Path(file_path).name}")
-            self.load_csv_placeholder(file_path)
+
+    def Choose_file_fun(self):
+      self.selected_file = "Ice Cream.csv" 
+      if self.selected_file:
+        with open(self.selected_file, 'r') as f:
+            next(f)
+            for l in f:
+                self.icecream = l.split(',')
+                self.temperatures.append(float(self.icecream[0]))
+                self.profits.append(float(self.icecream[1]))
+
+
+
 
     def load_csv_placeholder(self, file_path: str) -> None:
         """Implement CSV loading and chart updates here."""
